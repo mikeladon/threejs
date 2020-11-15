@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>My first three.js app</title>
+    <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+        }
+        #c {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="js/three.js"></script>
+<script>
+    function main() {
+        //choose the block to render everything
+        const canvas = document.querySelector('#c');
+        //call a renderer
+        const renderer = new THREE.WebGLRenderer({canvas});
+        //set up a camera
+        const fov = 75; // field of view
+        const aspect = 2;  // the canvas default
+        const near = 0.1;
+        const far = 5;
+        const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+        camera.position.z = 2;
+        //set a scene
+        const scene = new THREE.Scene();
+        //set up the light
+        const color = 0xFFFFFF;
+        const intensity = 1;
+        const light = new THREE.DirectionalLight(color, intensity);
+        light.position.set(-1, 2, 4);
+        scene.add(light);
+        //set up an item to display on the scene
+        const boxWidth = 1;
+        const boxHeight = 1;
+        const boxDepth = 1;
+        const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+        //MeshPhong can be affected by light, Default can't
+        const material = new THREE.MeshPhongMaterial({color: 0x44aa88});
+        //sum up properties to create an item
+        const cube = new THREE.Mesh(geometry, material);
+        //add the item to the scene
+        scene.add(cube);
+        //resize element(s) if needed
+        function resizeRendererToDisplaySize(renderer) {
+            const canvas = renderer.domElement;
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+            const needResize = canvas.width !== width || canvas.height !== height;
+            if (needResize) {
+                renderer.setSize(width, height, false);
+            }
+            return needResize;
+        };
+        //add rotation
+        function render(time) {
+            time *= 0.001;  // convert time to seconds
+
+            //position rendered element
+            if (resizeRendererToDisplaySize(renderer)) {
+                const canvas = renderer.domElement;
+                camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                camera.updateProjectionMatrix();
+            }
+
+            cube.rotation.x = time;
+            cube.rotation.y = time;
+            //render the scene with the camera
+
+            renderer.render(scene, camera);
+
+            requestAnimationFrame(render);
+        }
+        requestAnimationFrame(render);
+    }
+    main();
+</script>
+</body>
+</html>
